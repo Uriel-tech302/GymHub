@@ -1,4 +1,6 @@
-# 🏋️‍♂️ GymHub - Sistema de Gestión de Gimnasio, Inventario y Rutinas
+# GymHub - Sistema de Gestión de Gimnasio, Inventario y Rutinas
+
+<img width="2814" height="1536" alt="Gemini_Generated_Image_5pshhv5pshhv5psh" src="https://github.com/user-attachments/assets/8b21b93e-828b-485d-9eb6-252efaed7579" />
 
 ## Problemática que resuelve
 Los gimnasios independientes requieren controlar tanto el acceso y las membresías de sus clientes como las ventas de mostrador. Actualmente, esto se hace de manera rudimentaria en libretas separadas o en hojas de cálculo. 
