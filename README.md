@@ -32,5 +32,5 @@ Los gimnasios independientes requieren controlar tanto el acceso y las membresí
 ---
 
 ## 🔗 Enlaces Importantes
-* **Repositorio Código Fuente:** [Inserta aquí tu link de GitHub en Público]
+* **Repositorio Código Fuente:** [https://github.com/Uriel-tech302/GymHub]
 * **Tablero de Tareas (Backlog):** [https://github.com/users/Uriel-tech302/projects/2/views/1]
