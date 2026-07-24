@@ -27,7 +27,7 @@ Los gimnasios independientes requieren controlar tanto el acceso y las membresí
 
 ## Integrantes del Equipo
 * Uriel Espinoza de la Rosa
-* [Nombre de tu compañero/a]
+* Litzi Teresa Gonzalez Cruz
 
 ---
 
