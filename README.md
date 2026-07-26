@@ -34,3 +34,5 @@ Los gimnasios independientes requieren controlar tanto el acceso y las membresí
 ## 🔗 Enlaces Importantes
 * **Repositorio Código Fuente:** [https://github.com/Uriel-tech302/GymHub]
 * **Tablero de Tareas (Backlog):** [https://github.com/users/Uriel-tech302/projects/2/views/1]
+
+* **Prototipo de Figma:** [Ver Prototipo Interactivo](https://www.figma.com/proto/Hc8eKXuGY1mxzewdIGeIRF/GymHub?node-id=95-7&p=f&t=My2nPS188biLu9Lf-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=95%3A7&show-proto-sidebar=1)
