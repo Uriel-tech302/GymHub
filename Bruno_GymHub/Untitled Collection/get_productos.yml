@@ -1,0 +1,17 @@
+info:
+  name: get_productos
+  type: http
+  seq: 7
+
+http:
+  method: GET
+  url: http://localhost:8000/api/productos
+  auth:
+    type: bearer
+    token: 9|hvz6JfYqCYRq6SL7SgzkIcnXQVJXayLkYvgaBaYCc12ed0b6
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,20 @@
+info:
+  name: Login_closed
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: http://localhost:8000/api/logout
+  headers:
+    - name: Accept
+      value: application/json
+  auth:
+    type: bearer
+    token: lLWz7FxBdQS2bsyuhai5qcRPCQwnVW7efqxEmvDf25fa8e3a
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

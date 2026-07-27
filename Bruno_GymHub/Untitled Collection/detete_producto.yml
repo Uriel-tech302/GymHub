@@ -1,0 +1,17 @@
+info:
+  name: detete_producto
+  type: http
+  seq: 13
+
+http:
+  method: DELETE
+  url: http://localhost:8000/api/productos/2
+  auth:
+    type: bearer
+    token: hvz6JfYqCYRq6SL7SgzkIcnXQVJXayLkYvgaBaYCc12ed0b6
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

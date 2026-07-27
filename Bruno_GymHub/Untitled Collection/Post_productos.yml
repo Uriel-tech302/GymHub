@@ -1,0 +1,26 @@
+info:
+  name: Post_productos
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: http://localhost:8000/api/productos
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Proteína Whey 1kg",
+        "descripcion": "Suplemento en polvo sabor chocolate",
+        "precio": 850.00,
+        "stock": 15
+      }
+  auth:
+    type: bearer
+    token: 9|hvz6JfYqCYRq6SL7SgzkIcnXQVJXayLkYvgaBaYCc12ed0b6
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
