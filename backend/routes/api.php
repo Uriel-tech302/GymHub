@@ -98,7 +98,7 @@ Route::middleware('auth:sanctum')->group(function () {
         );
 
         Route::get(
-            '/productos/{id}',
+            '/productos/{producto}',
             [ProductoController::class, 'show']
         );
     });
