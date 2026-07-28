@@ -13,6 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 #[Fillable([
     'name',
     'email',
+    'telefono',
     'password',
     'role',
     'foto_perfil',
