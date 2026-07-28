@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MembresiaController;
+use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\RutinaController;
 use App\Http\Controllers\Api\UserController;
@@ -22,6 +23,15 @@ use App\Http\Controllers\Api\ProfileController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post(
+    '/forgot-password',
+    [PasswordResetController::class, 'forgotPassword']
+);
+
+Route::post(
+    '/reset-password',
+    [PasswordResetController::class, 'resetPassword']
+);
 /*
 |--------------------------------------------------------------------------
 | Rutas protegidas con Laravel Sanctum
