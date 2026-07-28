@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\RutinaController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VentaController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ProfileController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,7 +29,6 @@ Route::post('/login', [AuthController::class, 'login']);
 */
 
 Route::middleware('auth:sanctum')->group(function () {
-
     /*
     |--------------------------------------------------------------------------
     | Autenticación
@@ -36,6 +37,39 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
+
+    /*
+|--------------------------------------------------------------------------
+| Perfil del usuario autenticado
+|--------------------------------------------------------------------------
+*/
+
+    Route::prefix('profile')->group(function () {
+        Route::get(
+            '/',
+            [ProfileController::class, 'show']
+        );
+
+        Route::patch(
+            '/',
+            [ProfileController::class, 'update']
+        );
+
+        Route::post(
+            '/photo',
+            [ProfileController::class, 'updatePhoto']
+        );
+
+        Route::delete(
+            '/photo',
+            [ProfileController::class, 'deletePhoto']
+        );
+
+        Route::patch(
+            '/password',
+            [ProfileController::class, 'updatePassword']
+        );
+    });
 
     /*
     |--------------------------------------------------------------------------

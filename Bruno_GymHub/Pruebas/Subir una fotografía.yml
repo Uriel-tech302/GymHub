@@ -1,0 +1,25 @@
+info:
+  name: Subir una fotografía
+  type: http
+  seq: 35
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/profile/photo
+  body:
+    type: multipart-form
+    data:
+      - name: foto_perfil
+        type: file
+        value:
+          - C:\Users\darka\Downloads\Captura de pantalla 2026-07-27 171309.png
+        contentType: image/png
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
