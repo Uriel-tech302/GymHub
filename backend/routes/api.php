@@ -1,57 +1,173 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\MembresiaController;
+use App\Http\Controllers\Api\ProductoController;
+use App\Http\Controllers\Api\RutinaController;
 use App\Http\Controllers\Api\UserController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\VentaController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
-// 1. Ruta pública para iniciar sesión
-Route::post('login', [AuthController::class, 'login']);
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas
+|--------------------------------------------------------------------------
+|
+| No requieren token de autenticación.
+|
+*/
 
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
-// 2. RUTAS PROTEGIDAS (Requieren Token de Sanctum)
+/*
+|--------------------------------------------------------------------------
+| Rutas protegidas con Laravel Sanctum
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Autenticación
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/user', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    // --- ACCESOS DE ADMINISTRADOR ---
-    // --- ACCESOS DE ADMINISTRADOR ---
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ejercicios de Wger
+    |--------------------------------------------------------------------------
+    |
+    | Los tres roles pueden consultar ejercicios.
+    |
+    */
+
+    Route::middleware(
+        'role:Administrador,Empleado,Cliente'
+    )->group(function () {
+        Route::get(
+            '/ejercicios',
+            [RutinaController::class, 'obtenerEjercicios']
+        );
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Consulta de membresías
+    |--------------------------------------------------------------------------
+    |
+    | Administrador: administra el catálogo.
+    | Empleado: consulta planes para registrar ventas.
+    | Cliente: consulta los planes disponibles.
+    |
+    */
+
+    Route::middleware(
+        'role:Administrador,Empleado,Cliente'
+    )->group(function () {
+        Route::get(
+            '/membresias',
+            [MembresiaController::class, 'index']
+        );
+
+        Route::get(
+            '/membresias/{id}',
+            [MembresiaController::class, 'show']
+        );
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Consulta de productos
+    |--------------------------------------------------------------------------
+    |
+    | El administrador y el empleado pueden consultar inventario.
+    |
+    */
+
+    Route::middleware(
+        'role:Administrador,Empleado'
+    )->group(function () {
+        Route::get(
+            '/productos',
+            [ProductoController::class, 'index']
+        );
+
+        Route::get(
+            '/productos/{id}',
+            [ProductoController::class, 'show']
+        );
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ventas
+    |--------------------------------------------------------------------------
+    |
+    | Administradores y empleados pueden registrar y consultar ventas.
+    |
+    */
+
+    Route::middleware(
+        'role:Administrador,Empleado'
+    )->group(function () {
+        Route::apiResource(
+            'ventas',
+            VentaController::class
+        )->only([
+            'index',
+            'store',
+        ]);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Administración general
+    |--------------------------------------------------------------------------
+    */
+
     Route::middleware('role:Administrador')->group(function () {
 
-        // Gestión de usuarios
-        Route::apiResource('users', UserController::class);
+        // CRUD completo de usuarios
+        Route::apiResource(
+            'users',
+            UserController::class
+        );
 
-        // Gestión de membresías (NUEVA)
-        Route::apiResource('membresias', \App\Http\Controllers\Api\MembresiaController::class);
-        // Gestión de inventario físico (NUEVA)
-        Route::apiResource('productos', \App\Http\Controllers\Api\ProductoController::class);
-        // Consultar ejercicios desde la API externa de Wger
-        Route::get('/ejercicios', [\App\Http\Controllers\Api\RutinaController::class, 'obtenerEjercicios']);
+        // Crear, actualizar y eliminar membresías
+        Route::apiResource(
+            'membresias',
+            MembresiaController::class
+        )->except([
+            'index',
+            'show',
+        ]);
+
+        // Crear, actualizar y eliminar productos
+        Route::apiResource(
+            'productos',
+            ProductoController::class
+        )->except([
+            'index',
+            'show',
+        ]);
     });
 
-    // --- ACCESOS DE EMPLEADO (Recepcionistas, Entrenadores) ---
-    Route::middleware('role:Empleado')->group(function () {
-        // Rutas de prueba para el empleado
-        Route::get('/panel-empleado', function () {
-            return response()->json(['message' => 'Acceso concedido al área de empleados.']);
-        });
-        // Más adelante puedes agregar: registrar asistencias, ver inventario, etc.
-        // Registrar ventas (NUEVA)
-        Route::apiResource('ventas', \App\Http\Controllers\Api\VentaController::class);
-        // Consultar ejercicios desde la API externa de Wger
-        Route::get('/ejercicios', [\App\Http\Controllers\Api\RutinaController::class, 'obtenerEjercicios']);
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Área del cliente
+    |--------------------------------------------------------------------------
+    */
 
-    // --- ACCESOS DE CLIENTE (Miembros del gimnasio) ---
     Route::middleware('role:Cliente')->group(function () {
-        // Rutas de prueba para el cliente
         Route::get('/mi-progreso', function () {
-            return response()->json(['message' => 'Acceso concedido. Aquí verás tus rutinas.']);
-            // Consultar ejercicios desde la API externa de Wger
-        Route::get('/ejercicios', [\App\Http\Controllers\Api\RutinaController::class, 'obtenerEjercicios']);
+            return response()->json([
+                'message' => 'Acceso concedido al área del cliente.',
+            ]);
         });
-        // Más adelante puedes agregar: ver membresía activa, rutinas asignadas, etc.
     });
 });

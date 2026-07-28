@@ -8,18 +8,31 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    public function handle(Request $request, Closure $next, string $role): Response
-    {
-        // 1. Verificamos si hay un usuario logueado y si su rol coincide con el requerido
-        if (! $request->user() || $request->user()->role !== $role) {
-            
-            // 2. Si no coincide, lo rebotamos con un error 403 (Prohibido)
+    /**
+     * Verifica que el usuario autenticado tenga uno
+     * de los roles permitidos para la ruta.
+     */
+    public function handle(
+        Request $request,
+        Closure $next,
+        string ...$roles
+    ): Response {
+        $usuario = $request->user();
+
+        if (!$usuario) {
             return response()->json([
-                'message' => 'Acceso denegado. Tu nivel de usuario no permite ver esta sección.'
+                'message' => 'No has iniciado sesión.',
+            ], 401);
+        }
+
+        if (!in_array($usuario->role, $roles, true)) {
+            return response()->json([
+                'message' => 'Acceso denegado. Tu rol no tiene permiso para realizar esta acción.',
+                'role_actual' => $usuario->role,
+                'roles_permitidos' => $roles,
             ], 403);
         }
 
-        // 3. Si todo está bien, lo dejamos pasar
         return $next($request);
     }
 }

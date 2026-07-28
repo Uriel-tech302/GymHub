@@ -1,14 +1,14 @@
 info:
-  name: get_menbresia
+  name: Probar restricción por rol
   type: http
-  seq: 17
+  seq: 8
 
 http:
   method: GET
-  url: http://localhost:8000/api/membresias
+  url: http://127.0.0.1:8000/api/productos
   auth:
     type: bearer
-    token: hvz6JfYqCYRq6SL7SgzkIcnXQVJXayLkYvgaBaYCc12ed0b6
+    token: ikqOaGcsH3zO8IH9xVez1K99xdWwEZrgOmKvJDZfa27d6e25
 
 settings:
   encodeUrl: true

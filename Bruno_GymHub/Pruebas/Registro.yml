@@ -1,0 +1,29 @@
+info:
+  name: Registro
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/register
+  headers:
+    - name: Accept
+      value: application/json
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Cliente Prueba3",
+        "email": "cliente3.prueba@gymhub.com",
+        "password": "GymHub2026*",
+        "password_confirmation": "GymHub2026*"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

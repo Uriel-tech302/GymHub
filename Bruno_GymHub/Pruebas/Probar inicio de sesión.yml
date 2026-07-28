@@ -1,17 +1,17 @@
 info:
-  name: Login_admid
+  name: Probar inicio de sesión
   type: http
-  seq: 1
+  seq: 4
 
 http:
   method: POST
-  url: http://localhost:8000/api/login
+  url: http://127.0.0.1:8000/api/login
   body:
     type: json
     data: |-
       {
-        "email": "admin@gymhub.com",
-        "password": "12345678"
+        "email": "cliente.prueba@gymhub.com",
+        "password": "GymHub2026*"
       }
   auth: inherit
 
