@@ -1,0 +1,33 @@
+info:
+  name: Probar una venta mixta
+  type: http
+  seq: 31
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/ventas
+  body:
+    type: json
+    data: |-
+      {
+        "id_cliente": 5,
+        "detalles": [
+          {
+            "id_producto": 3,
+            "cantidad": 1
+          },
+          {
+            "id_membresia": 2,
+            "cantidad": 1
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -121,6 +121,7 @@ Route::middleware('auth:sanctum')->group(function () {
         )->only([
             'index',
             'store',
+            'show',
         ]);
     });
 
