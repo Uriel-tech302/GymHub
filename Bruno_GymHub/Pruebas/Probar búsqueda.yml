@@ -5,11 +5,7 @@ info:
 
 http:
   method: GET
-  url: http://127.0.0.1:8000/api/productos?search=proteina
-  params:
-    - name: search
-      value: proteina
-      type: query
+  url: http://127.0.0.1:8000/api/productos/1
   auth:
     type: bearer
     token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736

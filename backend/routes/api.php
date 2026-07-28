@@ -75,7 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
         );
 
         Route::get(
-            '/membresias/{id}',
+            '/membresias/{membresia}',
             [MembresiaController::class, 'show']
         );
     });

@@ -3,77 +3,177 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Membresias\IndexMembresiaRequest;
+use App\Http\Requests\Membresias\StoreMembresiaRequest;
+use App\Http\Requests\Membresias\UpdateMembresiaRequest;
+use App\Http\Resources\MembresiaResource;
 use App\Models\Membresia;
+use App\Models\VentaDetalle;
+use Illuminate\Http\JsonResponse;
 
 class MembresiaController extends Controller
 {
-    // 1. Mostrar todas las membresías (GET)
-    public function index()
-    {
-        $membresias = Membresia::all();
-        return response()->json($membresias, 200);
+    /**
+     * Listar membresías con paginación y filtros.
+     *
+     * Ejemplo:
+     * GET /api/membresias?search=mensual&per_page=5
+     */
+    public function index(
+        IndexMembresiaRequest $request
+    ) {
+        $datos = $request->validated();
+
+        $perPage = (int) (
+            $datos['per_page'] ?? 10
+        );
+
+        $search = trim(
+            (string) ($datos['search'] ?? '')
+        );
+
+        $membresias = Membresia::query()
+
+            // Buscar por nombre.
+            ->when(
+                $search !== '',
+                function ($query) use ($search) {
+                    $query->where(
+                        'nombre',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            )
+
+            // Filtrar por precio mínimo.
+            ->when(
+                isset($datos['precio_min']),
+                function ($query) use ($datos) {
+                    $query->where(
+                        'precio',
+                        '>=',
+                        $datos['precio_min']
+                    );
+                }
+            )
+
+            // Filtrar por precio máximo.
+            ->when(
+                isset($datos['precio_max']),
+                function ($query) use ($datos) {
+                    $query->where(
+                        'precio',
+                        '<=',
+                        $datos['precio_max']
+                    );
+                }
+            )
+
+            // Filtrar por duración mínima.
+            ->when(
+                isset($datos['duracion_min']),
+                function ($query) use ($datos) {
+                    $query->where(
+                        'duracion_dias',
+                        '>=',
+                        $datos['duracion_min']
+                    );
+                }
+            )
+
+            // Filtrar por duración máxima.
+            ->when(
+                isset($datos['duracion_max']),
+                function ($query) use ($datos) {
+                    $query->where(
+                        'duracion_dias',
+                        '<=',
+                        $datos['duracion_max']
+                    );
+                }
+            )
+
+            ->orderBy('precio')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return MembresiaResource::collection(
+            $membresias
+        );
     }
 
-    // 2. Crear una nueva membresía (POST)
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'precio' => 'required|numeric',
-            'duracion_dias' => 'required|integer',
+    /**
+     * Registrar una membresía.
+     */
+    public function store(
+        StoreMembresiaRequest $request
+    ) {
+        $membresia = Membresia::create(
+            $request->validated()
+        );
+
+        return (new MembresiaResource($membresia))
+            ->additional([
+                'message' => 'Membresía registrada correctamente.',
+            ])
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    /**
+     * Consultar una membresía específica.
+     */
+    public function show(
+        Membresia $membresia
+    ): MembresiaResource {
+        return new MembresiaResource(
+            $membresia
+        );
+    }
+
+    /**
+     * Actualizar una membresía.
+     */
+    public function update(
+        UpdateMembresiaRequest $request,
+        Membresia $membresia
+    ) {
+        $membresia->update(
+            $request->validated()
+        );
+
+        return (new MembresiaResource(
+            $membresia->fresh()
+        ))->additional([
+            'message' => 'Membresía actualizada correctamente.',
         ]);
-
-        $membresia = Membresia::create($request->all());
-
-        return response()->json([
-            'message' => 'Membresía creada con éxito',
-            'data' => $membresia
-        ], 201);
     }
 
-    // 3. Mostrar una membresía en específico (GET)
-    public function show($id)
-    {
-        $membresia = Membresia::find($id);
-        if (!$membresia) {
-            return response()->json(['message' => 'Membresía no encontrada'], 404);
-        }
-        return response()->json($membresia, 200);
-    }
+    /**
+     * Eliminar una membresía únicamente cuando
+     * no forme parte del historial de ventas.
+     */
+    public function destroy(
+        Membresia $membresia
+    ): JsonResponse {
+        $tieneVentas = VentaDetalle::query()
+            ->where(
+                'id_membresia',
+                $membresia->id
+            )
+            ->exists();
 
-    // 4. Actualizar una membresía (PUT/PATCH)
-    public function update(Request $request, $id)
-    {
-        $membresia = Membresia::find($id);
-        if (!$membresia) {
-            return response()->json(['message' => 'Membresía no encontrada'], 404);
-        }
-
-        $request->validate([
-            'nombre' => 'sometimes|required|string|max:255',
-            'precio' => 'sometimes|required|numeric',
-            'duracion_dias' => 'sometimes|required|integer',
-        ]);
-
-        $membresia->update($request->all());
-
-        return response()->json([
-            'message' => 'Membresía actualizada con éxito',
-            'data' => $membresia
-        ], 200);
-    }
-
-    // 5. Eliminar una membresía (DELETE)
-    public function destroy($id)
-    {
-        $membresia = Membresia::find($id);
-        if (!$membresia) {
-            return response()->json(['message' => 'Membresía no encontrada'], 404);
+        if ($tieneVentas) {
+            return response()->json([
+                'message' => 'No se puede eliminar la membresía porque forma parte del historial de ventas.',
+            ], 409);
         }
 
         $membresia->delete();
 
-        return response()->json(['message' => 'Membresía eliminada correctamente'], 200);
+        return response()->json([
+            'message' => 'Membresía eliminada correctamente.',
+        ], 200);
     }
 }
