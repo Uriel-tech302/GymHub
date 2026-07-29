@@ -274,5 +274,99 @@
     .register-login-link a:hover {
         text-decoration: underline;
     }
+}
 
+.forgot-description {
+    margin: -8px 0 24px;
+    color: #666666;
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.forgot-success {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    color: #276738;
+    background: #edf9f0;
+    border: 1px solid #a9d9b4;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.forgot-back-link {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    color: #555555;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.forgot-back-link:hover {
+    color: #e65328;
+}
+
+.login-forgot a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.login-forgot a:hover {
+    color: #e65328;
+    text-decoration: underline;
+}
+.reset-email-container {
+  margin: -8px 0 22px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  color: #555555;
+  background: #f8f8f8;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.reset-completed {
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #276738;
+  text-align: center;
+}
+
+.reset-completed h2 {
+  margin: 14px 0 8px;
+  color: #202020;
+  font-size: 22px;
+}
+
+.reset-completed p {
+  margin: 0 0 22px;
+  color: #606060;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.reset-login-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.reset-login-button:hover {
+  color: #ffffff;
 }

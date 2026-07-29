@@ -7,6 +7,7 @@ import {
   Mail,
 } from 'lucide-react'
 import {
+  Link,
   Navigate,
   useNavigate,
 } from 'react-router-dom'
@@ -117,7 +118,7 @@ function LoginPage() {
       } else {
         setGeneralError(
           data?.message ??
-            'No fue posible conectar con GymHub. Verifica que Laravel esté funcionando.',
+          'No fue posible conectar con GymHub. Verifica que Laravel esté funcionando.',
         )
       }
     } finally {
@@ -179,9 +180,8 @@ function LoginPage() {
             </label>
 
             <div
-              className={`login-input-container ${
-                errors.email ? 'has-error' : ''
-              }`}
+              className={`login-input-container ${errors.email ? 'has-error' : ''
+                }`}
             >
               <Mail size={20} />
 
@@ -209,9 +209,8 @@ function LoginPage() {
             </label>
 
             <div
-              className={`login-input-container ${
-                errors.password ? 'has-error' : ''
-              }`}
+              className={`login-input-container ${errors.password ? 'has-error' : ''
+                }`}
             >
               <LockKeyhole size={20} />
 
@@ -259,7 +258,9 @@ function LoginPage() {
           </div>
 
           <p className="login-forgot">
-            ¿Olvidaste tu contraseña?
+            <Link to="/recuperar-contrasena">
+              ¿Olvidaste tu contraseña?
+            </Link>
           </p>
 
           <div className="login-requirements">
