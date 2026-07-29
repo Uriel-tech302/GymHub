@@ -6,6 +6,7 @@ import {
 import LoginPage from './pages/auth/LoginPage'
 import HomePage from './pages/shared/HomePage'
 import ProtectedRoute from './routes/ProtectedRoute'
+import RegisterPage from './pages/auth/RegisterPage'
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
       <Route
         path="/login"
         element={<LoginPage />}
+      />
+      <Route
+        path="/registro"
+        element={<RegisterPage />}
       />
 
       <Route
