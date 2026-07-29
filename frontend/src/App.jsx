@@ -9,6 +9,7 @@ import ProtectedRoute from './routes/ProtectedRoute'
 import RegisterPage from './pages/auth/RegisterPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
+import MainLayout from './components/layout/MainLayout'
 function App() {
   return (
     <Routes>
@@ -29,7 +30,6 @@ function App() {
         element={<ResetPasswordPage />}
       />
       <Route
-        path="/inicio"
         element={
           <ProtectedRoute
             allowedRoles={[
@@ -38,10 +38,15 @@ function App() {
               'Cliente',
             ]}
           >
-            <HomePage />
+            <MainLayout />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path="/inicio"
+          element={<HomePage />}
+        />
+      </Route>
 
       <Route
         path="/"
