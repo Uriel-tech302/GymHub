@@ -1,0 +1,25 @@
+info:
+  name: Probar validaciones incorrectas_producto
+  type: http
+  seq: 40
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/productos
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Producto incorrecto",
+        "precio": -50,
+        "stock": -4
+      }
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

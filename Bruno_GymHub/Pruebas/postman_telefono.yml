@@ -1,0 +1,29 @@
+info:
+  name: postman_telefono
+  type: http
+  seq: 34
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/users
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Cliente con Teléfono",
+        "email": "cliente.telefono@gymhub.com",
+        "telefono": "+529511234567",
+        "password": "Cliente2026*",
+        "password_confirmation": "Cliente2026*",
+        "role": "Cliente",
+        "fecha_vencimiento": null
+      }
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

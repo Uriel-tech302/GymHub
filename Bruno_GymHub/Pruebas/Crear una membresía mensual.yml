@@ -1,0 +1,25 @@
+info:
+  name: Crear una membresía mensual
+  type: http
+  seq: 50
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/membresias
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Plan mensual",
+        "precio": 450.00,
+        "duracion_dias": 30
+      }
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

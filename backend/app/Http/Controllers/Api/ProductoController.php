@@ -3,77 +3,173 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Productos\StoreProductoRequest;
+use App\Http\Requests\Productos\UpdateProductoRequest;
+use App\Http\Resources\ProductoResource;
 use App\Models\Producto;
+use App\Models\VentaDetalle;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    // 1. Mostrar todos los productos (GET)
-    public function index()
+    /**
+     * Mostrar productos con paginación, búsqueda y filtros.
+     *
+     * Ejemplos:
+     * GET /api/productos?page=1&per_page=10
+     * GET /api/productos?search=proteina
+     * GET /api/productos?estado_stock=agotado
+     */
+    public function index(Request $request)
     {
-        $productos = Producto::all();
-        return response()->json($productos, 200);
+        $perPage = (int) $request->query(
+            'per_page',
+            10
+        );
+
+        // Se permiten entre 1 y 50 registros por página.
+        $perPage = min(
+            max($perPage, 1),
+            50
+        );
+
+        $search = trim(
+            (string) $request->query('search', '')
+        );
+
+        $estadoStock = strtolower(
+            trim(
+                (string) $request->query(
+                    'estado_stock',
+                    ''
+                )
+            )
+        );
+
+        $productos = Producto::query()
+
+            /*
+             * Buscar coincidencias en el nombre.
+             */
+            ->when(
+                $search !== '',
+                function ($query) use ($search) {
+                    $query->where(
+                        'nombre',
+                        'like',
+                        "%{$search}%"
+                    );
+                }
+            )
+
+            /*
+             * Filtrar productos agotados, con stock bajo
+             * o con disponibilidad normal.
+             */
+            ->when(
+                $estadoStock === 'agotado',
+                function ($query) {
+                    $query->where('stock', 0);
+                }
+            )
+
+            ->when(
+                $estadoStock === 'bajo',
+                function ($query) {
+                    $query->whereBetween(
+                        'stock',
+                        [1, 5]
+                    );
+                }
+            )
+
+            ->when(
+                $estadoStock === 'disponible',
+                function ($query) {
+                    $query->where('stock', '>', 5);
+                }
+            )
+
+            ->orderByDesc('id')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return ProductoResource::collection(
+            $productos
+        );
     }
 
-    // 2. Crear un nuevo producto (POST)
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'precio' => 'required|numeric',
-            'stock' => 'required|integer',
+    /**
+     * Registrar un producto.
+     */
+    public function store(
+        StoreProductoRequest $request
+    ) {
+        $producto = Producto::create(
+            $request->validated()
+        );
+
+        return (new ProductoResource($producto))
+            ->additional([
+                'message' => 'Producto registrado correctamente.',
+            ])
+            ->response()
+            ->setStatusCode(201);
+    }
+
+    /**
+     * Mostrar un producto específico.
+     *
+     * Laravel devolverá 404 automáticamente si no existe.
+     */
+    public function show(
+        Producto $producto
+    ): ProductoResource {
+        return new ProductoResource($producto);
+    }
+
+    /**
+     * Actualizar un producto.
+     */
+    public function update(
+        UpdateProductoRequest $request,
+        Producto $producto
+    ) {
+        $producto->update(
+            $request->validated()
+        );
+
+        return (new ProductoResource(
+            $producto->fresh()
+        ))->additional([
+            'message' => 'Producto actualizado correctamente.',
         ]);
-
-        $producto = Producto::create($request->all());
-
-        return response()->json([
-            'message' => 'Producto creado con éxito',
-            'data' => $producto
-        ], 201);
     }
 
-    // 3. Mostrar un producto en específico (GET)
-    public function show($id)
-    {
-        $producto = Producto::find($id);
-        if (!$producto) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-        return response()->json($producto, 200);
-    }
+    /**
+     * Eliminar un producto cuando no tenga ventas relacionadas.
+     */
+    public function destroy(
+        Producto $producto
+    ): JsonResponse {
+        $tieneVentas = VentaDetalle::query()
+            ->where(
+                'id_producto',
+                $producto->id
+            )
+            ->exists();
 
-    // 4. Actualizar un producto (PUT/PATCH)
-    public function update(Request $request, $id)
-    {
-        $producto = Producto::find($id);
-        if (!$producto) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-
-        $request->validate([
-            'nombre' => 'sometimes|required|string|max:255',
-            'precio' => 'sometimes|required|numeric',
-            'stock' => 'sometimes|required|integer',
-        ]);
-
-        $producto->update($request->all());
-
-        return response()->json([
-            'message' => 'Producto actualizado con éxito',
-            'data' => $producto
-        ], 200);
-    }
-
-    // 5. Eliminar un producto (DELETE)
-    public function destroy($id)
-    {
-        $producto = Producto::find($id);
-        if (!$producto) {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
+        if ($tieneVentas) {
+            return response()->json([
+                'message' => 'No se puede eliminar el producto porque forma parte del historial de ventas.',
+            ], 409);
         }
 
         $producto->delete();
 
-        return response()->json(['message' => 'Producto eliminado correctamente'], 200);
+        return response()->json([
+            'message' => 'Producto eliminado correctamente.',
+        ], 200);
     }
 }

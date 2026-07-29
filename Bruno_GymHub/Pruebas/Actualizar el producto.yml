@@ -1,0 +1,24 @@
+info:
+  name: Actualizar el producto
+  type: http
+  seq: 48
+
+http:
+  method: PATCH
+  url: http://127.0.0.1:8000/api/productos/1
+  body:
+    type: json
+    data: |-
+      {
+        "precio": 699.90,
+        "stock": 4
+      }
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

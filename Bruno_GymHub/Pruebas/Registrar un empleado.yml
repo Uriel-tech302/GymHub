@@ -1,0 +1,28 @@
+info:
+  name: Registrar un empleado
+  type: http
+  seq: 20
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/users
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Empleado GymHub",
+        "email": "empleado@gymhub.com",
+        "password": "Empleado2026*",
+        "password_confirmation": "Empleado2026*",
+        "role": "Empleado",
+        "fecha_vencimiento": null
+      }
+  auth:
+    type: bearer
+    token: 16|qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

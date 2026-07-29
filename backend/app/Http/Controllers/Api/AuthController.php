@@ -3,38 +3,100 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    /**
+     * Registrar una nueva cuenta.
+     *
+     * Los registros públicos siempre tendrán el rol Cliente.
+     * Los empleados y administradores se crearán posteriormente
+     * desde el módulo administrativo.
+     */
+    public function register(RegisterRequest $request): JsonResponse
     {
-        // 1. Validar que nos envíen email y password
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+        $datos = $request->validated();
+
+        $usuario = User::create([
+            'name' => $datos['name'],
+            'email' => strtolower($datos['email']),
+            'password' => Hash::make($datos['password']),
+            'role' => 'Cliente',
         ]);
 
-        // 2. Buscar al usuario en la base de datos
-        $user = User::where('email', $request->email)->first();
+        $token = $usuario
+            ->createToken('gymhub-web')
+            ->plainTextToken;
 
-        // 3. Revisar si el usuario existe y la contraseña es correcta
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Cuenta creada correctamente.',
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+            'user' => $usuario,
+        ], 201);
+    }
+
+    /**
+     * Iniciar sesión mediante correo y contraseña.
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $datos = $request->validated();
+
+        $usuario = User::where(
+            'email',
+            strtolower($datos['email'])
+        )->first();
+
+        if (
+            !$usuario ||
+            !Hash::check($datos['password'], $usuario->password)
+        ) {
             return response()->json([
-                'message' => 'Credenciales incorrectas'
+                'message' => 'Credenciales incorrectas. Verifica tu correo y contraseña.',
             ], 401);
         }
 
-        // 4. Crear el token de Sanctum
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $usuario
+            ->createToken('gymhub-web')
+            ->plainTextToken;
 
-        // 5. Devolver la respuesta exitosa para React
         return response()->json([
-            'message' => '¡Bienvenido a GymHub!',
+            'message' => 'Inicio de sesión exitoso.',
             'access_token' => $token,
-            'user' => $user
-        ]);
+            'token_type' => 'Bearer',
+            'user' => $usuario,
+        ], 200);
+    }
+
+    /**
+     * Obtener los datos del usuario autenticado.
+     */
+    public function me(Request $request): JsonResponse
+    {
+        return response()->json([
+            'message' => 'Usuario autenticado obtenido correctamente.',
+            'user' => $request->user(),
+        ], 200);
+    }
+
+    /**
+     * Cerrar la sesión actual eliminando el token utilizado.
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()
+            ->currentAccessToken()
+            ?->delete();
+
+        return response()->json([
+            'message' => 'Sesión cerrada correctamente.',
+        ], 200);
     }
 }

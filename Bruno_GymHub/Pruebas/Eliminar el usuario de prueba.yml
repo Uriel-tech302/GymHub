@@ -1,0 +1,20 @@
+info:
+  name: Eliminar el usuario de prueba
+  type: http
+  seq: 28
+
+http:
+  method: DELETE
+  url: http://127.0.0.1:8000/api/users/17
+  body:
+    type: json
+    data: ""
+  auth:
+    type: bearer
+    token: qZEYRgz5IiJPupQh9jvxZ7VDxL17Y0pg2bJzApYt82b49736
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
