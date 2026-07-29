@@ -1,0 +1,24 @@
+info:
+  name: restablecer_contraseña
+  type: http
+  seq: 38
+
+http:
+  method: POST
+  url: http://127.0.0.1:8000/api/reset-password
+  body:
+    type: json
+    data: |-
+      {
+        "token": "88308e328728fccf2301fdb7c5b3d7bcd47a02ca9c9c6f420cceaf8851619ca0",
+        "email": "cliente@gymhub.com",
+        "password": "NuevaClave2026*",
+        "password_confirmation": "NuevaClave2026*"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
