@@ -262,7 +262,7 @@ function LoginPage() {
               ¿Olvidaste tu contraseña?
             </Link>
           </p>
-
+          {/**   
           <div className="login-requirements">
             <strong>
               Requisitos de contraseña
@@ -273,7 +273,7 @@ function LoginPage() {
             <span>• Un número</span>
             <span>• Un carácter especial</span>
           </div>
-
+           */}
           <button
             className="login-submit"
             type="submit"

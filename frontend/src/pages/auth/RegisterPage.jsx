@@ -173,6 +173,7 @@ function RegisterPage() {
     <main className="login-page">
       <section className="login-card register-card">
         <header className="login-brand">
+          
           <div>
             <p className="login-brand-name">
               <span>Gym</span>
