@@ -1,252 +1,188 @@
 import { useState } from 'react'
 import {
+  Boxes,
   ChevronDown,
-  CreditCard,
   Dumbbell,
-  LayoutDashboard,
+  Home,
   LogOut,
-  Menu,
-  Package,
   Settings,
   ShoppingCart,
-  UserRound,
   Users,
-  X,
+  WalletCards,
 } from 'lucide-react'
-import {
-  NavLink,
-  Outlet,
-  useNavigate,
-} from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import useAuth from '../../hooks/useAuth'
 import './MainLayout.css'
 
-/**
- * Menús disponibles según el rol autenticado.
- *
- * Los módulos que todavía no construimos aparecen
- * deshabilitados temporalmente.
- */
-const menusByRole = {
-  Administrador: [
-    {
-      label: 'Inicio',
-      path: '/inicio',
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'Usuarios',
-      icon: Users,
-      disabled: true,
-    },
-    {
-      label: 'Membresías',
-      icon: CreditCard,
-      disabled: true,
-    },
-    {
-      label: 'Inventario',
-      icon: Package,
-      disabled: true,
-    },
-    {
-      label: 'Ventas',
-      icon: ShoppingCart,
-      disabled: true,
-    },
-    {
-      label: 'Rutinas',
-      icon: Dumbbell,
-      disabled: true,
-    },
-  ],
-
-  Empleado: [
-    {
-      label: 'Inicio',
-      path: '/inicio',
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'Clientes',
-      icon: Users,
-      disabled: true,
-    },
-    {
-      label: 'Membresías',
-      icon: CreditCard,
-      disabled: true,
-    },
-    {
-      label: 'Inventario',
-      icon: Package,
-      disabled: true,
-    },
-    {
-      label: 'Ventas',
-      icon: ShoppingCart,
-      disabled: true,
-    },
-    {
-      label: 'Rutinas',
-      icon: Dumbbell,
-      disabled: true,
-    },
-  ],
-
-  Cliente: [
-    {
-      label: 'Inicio',
-      path: '/inicio',
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'Mi membresía',
-      icon: CreditCard,
-      disabled: true,
-    },
-    {
-      label: 'Historial',
-      icon: ShoppingCart,
-      disabled: true,
-    },
-    {
-      label: 'Rutinas',
-      icon: Dumbbell,
-      disabled: true,
-    },
-  ],
-}
-
 function MainLayout() {
-  const navigate = useNavigate()
-
-  const {
-    user,
-    logout,
-  } = useAuth()
-
-  const [sidebarOpen, setSidebarOpen] =
+  const { user, logout } = useAuth()
+  const [menuUsuarioAbierto, setMenuUsuarioAbierto] =
     useState(false)
 
-  const [userMenuOpen, setUserMenuOpen] =
-    useState(false)
+  const iniciales = user?.name
+    ?.split(' ')
+    .slice(0, 2)
+    .map((palabra) => palabra[0])
+    .join('')
+    .toUpperCase()
 
-  const menuItems =
-    menusByRole[user?.role] ??
-    menusByRole.Cliente
+  const opcionesPorRol = {
+    Administrador: [
+      {
+        to: '/inicio',
+        label: 'Inicio',
+        icon: Home,
+      },
+      {
+        to: '/usuarios',
+        label: 'Usuarios',
+        icon: Users,
+      },
+      {
+        to: '/membresias',
+        label: 'Membresías',
+        icon: WalletCards,
+      },
+      {
+        to: '/inventario',
+        label: 'Inventario',
+        icon: Boxes,
+      },
+      {
+        to: '/ventas',
+        label: 'Ventas',
+        icon: ShoppingCart,
+      },
+      {
+        to: '/rutinas',
+        label: 'Rutinas',
+        icon: Dumbbell,
+      },
+    ],
 
-  /**
-   * Genera las iniciales que se muestran cuando
-   * el usuario todavía no tiene fotografía.
-   */
-  const userInitials = user?.name
-    ? user.name
-        .trim()
-        .split(/\s+/)
-        .slice(0, 2)
-        .map((word) => word[0]?.toUpperCase())
-        .join('')
-    : 'GH'
+    Empleado: [
+      {
+        to: '/inicio',
+        label: 'Inicio',
+        icon: Home,
+      },
+      {
+        to: '/membresias',
+        label: 'Membresías',
+        icon: WalletCards,
+      },
+      {
+        to: '/inventario',
+        label: 'Inventario',
+        icon: Boxes,
+      },
+      {
+        to: '/ventas',
+        label: 'Ventas',
+        icon: ShoppingCart,
+      },
+      {
+        to: '/rutinas',
+        label: 'Rutinas',
+        icon: Dumbbell,
+      },
+    ],
 
-  const handleLogout = async () => {
+    Cliente: [
+      {
+        to: '/inicio',
+        label: 'Inicio',
+        icon: Home,
+      },
+      {
+        to: '/mi-membresia',
+        label: 'Mi membresía',
+        icon: WalletCards,
+      },
+      {
+        to: '/historial',
+        label: 'Historial',
+        icon: ShoppingCart,
+      },
+      {
+        to: '/rutinas',
+        label: 'Rutinas',
+        icon: Dumbbell,
+      },
+    ],
+  }
+
+  const opciones =
+    opcionesPorRol[user?.role] ??
+    opcionesPorRol.Cliente
+
+  const cerrarSesion = async () => {
     await logout()
-
-    navigate('/login', {
-      replace: true,
-    })
   }
 
   return (
     <div className="main-layout">
       <header className="main-header">
-        <div className="main-header-left">
-          <button
-            className="mobile-menu-button"
-            type="button"
-            aria-label="Abrir menú"
-            onClick={() =>
-              setSidebarOpen(true)
-            }
-          >
-            <Menu size={24} />
-          </button>
+        <div className="main-brand">
+          <div className="main-brand-icon">
+            <Dumbbell size={30} />
+          </div>
 
-          <NavLink
-            className="main-brand"
-            to="/inicio"
-          >
-            <div className="main-brand-icon">
-              <Dumbbell size={27} />
-            </div>
+          <div>
+            <p className="main-brand-name">
+              <span>Gym</span>
+              <strong>Hub</strong>
+            </p>
 
-            <div>
-              <p className="main-brand-name">
-                <span>Gym</span>
-                <strong>Hub</strong>
-              </p>
-
-              <small>
-                Sistema de Gestión y Bienestar
-              </small>
-            </div>
-          </NavLink>
+            <p className="main-brand-description">
+              Sistema de Gestión y Bienestar
+            </p>
+          </div>
         </div>
 
-        <div className="main-user-container">
+        <div className="main-user">
           <button
-            className="main-user-button"
             type="button"
-            aria-expanded={userMenuOpen}
+            className="main-user-button"
             onClick={() =>
-              setUserMenuOpen(
-                (previous) => !previous,
+              setMenuUsuarioAbierto(
+                (estadoAnterior) =>
+                  !estadoAnterior,
               )
             }
           >
-            <div className="main-user-avatar">
-              {user?.foto_perfil_url ? (
-                <img
-                  src={user.foto_perfil_url}
-                  alt={`Fotografía de ${user.name}`}
-                />
-              ) : (
-                <span>{userInitials}</span>
-              )}
-            </div>
+            <span className="main-user-avatar">
+              {iniciales || 'GH'}
+            </span>
 
-            <div className="main-user-info">
-              <span>Bienvenido</span>
+            <span className="main-user-info">
+              <small>Bienvenido</small>
               <strong>{user?.name}</strong>
-            </div>
+            </span>
 
             <ChevronDown
+              size={18}
               className={
-                userMenuOpen
-                  ? 'user-chevron-open'
-                  : ''
+                menuUsuarioAbierto
+                  ? 'main-user-chevron open'
+                  : 'main-user-chevron'
               }
-              size={20}
             />
           </button>
 
-          {userMenuOpen && (
-            <div className="main-user-dropdown">
-              <button
-                type="button"
-                disabled
-                title="Este módulo se construirá después"
-              >
-                <Settings size={19} />
+          {menuUsuarioAbierto && (
+            <div className="main-user-menu">
+              <button type="button">
+                <Settings size={18} />
                 Configuración
               </button>
 
               <button
-                className="logout-option"
                 type="button"
-                onClick={handleLogout}
+                className="logout-option"
+                onClick={cerrarSesion}
               >
-                <LogOut size={19} />
+                <LogOut size={18} />
                 Cerrar sesión
               </button>
             </div>
@@ -254,94 +190,37 @@ function MainLayout() {
         </div>
       </header>
 
-      <div className="main-body">
-        {sidebarOpen && (
-          <button
-            className="sidebar-overlay"
-            type="button"
-            aria-label="Cerrar menú"
-            onClick={() =>
-              setSidebarOpen(false)
-            }
-          />
-        )}
-
-        <aside
-          className={`main-sidebar ${
-            sidebarOpen
-              ? 'main-sidebar-open'
-              : ''
-          }`}
-        >
-          <div className="sidebar-mobile-header">
-            <span>Menú principal</span>
-
-            <button
-              type="button"
-              aria-label="Cerrar menú"
-              onClick={() =>
-                setSidebarOpen(false)
+      <nav className="main-navigation">
+        {opciones.map(
+          ({
+            to,
+            label,
+            icon: Icon,
+          }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                isActive
+                  ? 'main-navigation-link active'
+                  : 'main-navigation-link'
               }
             >
-              <X size={22} />
-            </button>
-          </div>
+              <Icon size={19} />
+              <span>{label}</span>
+            </NavLink>
+          ),
+        )}
+      </nav>
 
-          <nav className="main-navigation">
-            {menuItems.map((item) => {
-              const Icon = item.icon
+      <main className="main-content">
+        <Outlet />
+      </main>
 
-              if (item.disabled) {
-                return (
-                  <button
-                    className="navigation-item navigation-item-disabled"
-                    type="button"
-                    key={item.label}
-                    title="Módulo en construcción"
-                    disabled
-                  >
-                    <Icon size={21} />
-                    <span>{item.label}</span>
-                  </button>
-                )
-              }
-
-              return (
-                <NavLink
-                  className={({ isActive }) =>
-                    `navigation-item ${
-                      isActive
-                        ? 'navigation-item-active'
-                        : ''
-                    }`
-                  }
-                  key={item.label}
-                  to={item.path}
-                  onClick={() =>
-                    setSidebarOpen(false)
-                  }
-                >
-                  <Icon size={21} />
-                  <span>{item.label}</span>
-                </NavLink>
-              )
-            })}
-          </nav>
-
-          <div className="sidebar-role">
-            <UserRound size={18} />
-
-            <div>
-              <span>Rol actual</span>
-              <strong>{user?.role}</strong>
-            </div>
-          </div>
-        </aside>
-
-        <section className="main-content">
-          <Outlet />
-        </section>
-      </div>
+      <footer className="main-footer">
+        © 2026 GymHub. Todos los derechos
+        reservados.
+      </footer>
     </div>
   )
 }

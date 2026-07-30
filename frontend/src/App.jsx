@@ -10,6 +10,7 @@ import RegisterPage from './pages/auth/RegisterPage'
 import ForgotPasswordPage from './pages/auth/ForgotPasswordPage'
 import ResetPasswordPage from './pages/auth/ResetPasswordPage'
 import MainLayout from './components/layout/MainLayout'
+import UsersPage from './pages/admin/UsersPage'
 function App() {
   return (
     <Routes>
@@ -47,7 +48,16 @@ function App() {
           element={<HomePage />}
         />
       </Route>
-
+      <Route
+        path="/usuarios"
+        element={
+          <ProtectedRoute
+            allowedRoles={['Administrador']}
+          >
+            <UsersPage />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/"
         element={
